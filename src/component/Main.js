@@ -19,9 +19,6 @@ export default function Main(){
     const [memberDict, setMemberDict] = useState({}); // 멤버 정보 목록
     const [leader, setLeader] = useState(false); // 방장일 경우 true    
 
-
-    console.log(chat)
-
     // 채팅 블럭 테스트
     // <div key={chat.length + 1} className="chatBlock">
     //     <div className="chatIcon">
@@ -41,60 +38,62 @@ export default function Main(){
     //     </div>
     // </div>
 
+    // 소켓 연결을 함수화 해서 방을 클릭할 때 해당 토큰 값으로 바로 변경
+
+    // const socketConnect = () => {
+    //     let socket = new SockJS("/socket");
+    //     socket.onopen = () =>{
+    //         socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
+    //     }
+
+    //     socket.onmessage = (e) => {
+    //         let content = JSON.parse(e.data);
+    //         let type = content.type;
+    //         if(type == "SEND"){
+    //             let temp;
+    //             if(content.fileType === "text"){
+    //                 temp = <div className="chatContent">
+    //                             <pre>
+    //                                 {content.message}
+    //                             </pre>
+    //                         </div>;
+    //             }else if(content.fileType === "image"){
+    //                 temp = <div className="chatContent">
+    //                             <img src={content.message}/>
+    //                         </div>;
+    //             }else if(content.fileType === "file"){
+    //                 temp = <div className="chatContent">
+    //                             <a href={"http://localhost:8080"+content.message} download>파일 다운로드</a>
+    //                         </div>;
+    //             }
+                
+    //             chat.push(<div key={chat.length + 1} className="chatBlock">
+    //                 <div className="chatIcon">
+    //                     <img src={memberDict[content.user]}/>
+    //                     {content.user}
+    //                 </div>
+    //                 {temp}
+    //             </div>);
+                
+    //             setChat([...chat]);
+                
+    //         }
+    //     };
+
+    //     socket.onerror = (err) => {
+    //         socket.close();
+    //         socket = new SockJS("/socket")
+    //     }
+    // }
+
+    console.log(num + " : " + select)
+
     let socket = new SockJS("/socket");
-    // 방이 바뀔 때
-    if(select !== ""){
-        socket.onopen = () =>{
-            socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
-        }
-
-        socket.onmessage = (e) => {
-            let content = JSON.parse(e.data);
-            let type = content.type;
-            if(type == "SEND"){
-                let temp;
-                let tempArr = [...chat];
-                if(content.fileType === "text"){
-                    temp = <div className="chatContent">
-                                <pre>
-                                    {content.message}
-                                </pre>
-                            </div>;
-                }else if(content.fileType === "image"){
-                    temp = <div className="chatContent">
-                                <img src={content.message}/>
-                            </div>;
-                }else if(content.fileType === "file"){
-                    temp = <div className="chatContent">
-                                <a href={"http://localhost:8080"+content.message} download>파일 다운로드</a>
-                            </div>;
-                }
-                
-                tempArr.push(<div key={chat.length + 1} className="chatBlock">
-                    <div className="chatIcon">
-                        <img src={memberDict[content.user]}/>
-                        {content.user}
-                    </div>
-                    {temp}
-                </div>);
-                
-                setChat([...chat]);
-                
-            }
-        };
-
-        socket.onerror = (err) => {
-            socket.close();
-            socket = new SockJS("/socket")
-        }
-    }
-
-
+    
     useEffect(() => {
         console.log("room Change")
         
-        if(select !== ""){
-            console.log("socket start!")
+        console.log("socket start!")
         
 
             axios.get("/chat/list?id=" + num, {
@@ -131,7 +130,21 @@ export default function Main(){
                         {temp}
                     </div>);
                 }
+
                 setChat([...tempArr]);
+                
+
+                // 문제는 위 내용에서 채팅 블럭을 바꿔도 아래에서는 이전 채팅 블럭을 기억하고 있는 것이 문제
+                // 그러므로 초기화를 애초에 위로 하면 될 듯
+                
+                axios.get("/room/depart?id="+num, {
+                    headers : {
+                        "access" : state.check
+                    }
+                }).then((response) => {
+                    setSelect(response.data)
+                })
+
             })
             .catch((error) => {
                 if(error.code === "ERR_BAD_REQUEST"){
@@ -145,9 +158,57 @@ export default function Main(){
             });
 
             
-        }
 
     }, [num])
+
+
+    useEffect(() => {
+        console.log("room change " + num + " : " + select)
+        socket.onopen = () =>{
+            socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
+        }
+
+        socket.onmessage = (e) => {
+            console.log("chat!")
+            let content = JSON.parse(e.data);
+            let type = content.type;
+            if(type == "SEND"){
+                let temp;
+                if(content.fileType === "text"){
+                    temp = <div className="chatContent">
+                                <pre>
+                                    {content.message}
+                                </pre>
+                            </div>;
+                }else if(content.fileType === "image"){
+                    temp = <div className="chatContent">
+                                <img src={content.message}/>
+                            </div>;
+                }else if(content.fileType === "file"){
+                    temp = <div className="chatContent">
+                                <a href={"http://localhost:8080"+content.message} download>파일 다운로드</a>
+                            </div>;
+                }
+                
+                chat.push(<div key={chat.length + 1} className="chatBlock">
+                    <div className="chatIcon">
+                        <img src={memberDict[content.user]}/>
+                        {content.user}
+                    </div>
+                    {temp}
+                </div>);
+                console.log("소켓 시 채팅 배열 근황")
+                console.log(chat)
+                setChat([...chat]);
+                
+            }
+        };
+    
+        socket.onerror = (err) => {
+            socket.close();
+            socket = new SockJS("/socket")
+        }
+    }, [select]);
 
     useEffect(() => {
         console.log("init")
@@ -225,26 +286,7 @@ export default function Main(){
                                                         
                                                         setNum(info[i].room_id);
                                                         // 해당 room_id를 서버에 보내 방의 토큰값을 받아와 소켓 연결을 시작
-                                                        axios.get("/room/depart?id="+info[i].room_id, {
-                                                            headers : {
-                                                                "access" : state.check
-                                                            }
-                                                        })
-                                                        .then((response) => {
-                                                            console.log(state.id + " " + info[i].room_leader)
-                                                            if(state.id === info[i].room_leader)
-                                                                setLeader(true);
-                                                            setSelect(response.data);
-                                                        }).catch((error) => {
-                                                            if(error.code === "ERR_BAD_REQUEST"){
-                                                                axios.post("/reissue").then((response) => {
-                                                                    let temp = state;
-                                                                    temp.chcek = response.headers.access
-                                                                    setState(temp)
-                                                
-                                                                })
-                                                            }
-                                                        });
+                                                        
                                                     }}>
 
                                                         <div className="roomName">
@@ -349,7 +391,7 @@ export default function Main(){
             for(let i = 0; i < info.length; i++){
                 block.push(
                     <div id={"room_" + info[i].room_id} key={"room_" + info[i].room_id}
-                     className="roomBlock" onClick={(event) => {
+                        className="roomBlock" onClick={(event) => {
                         
                         setNum(info[i].room_id);
                         axios.get("/room/depart?id="+info[i].room_id, {
@@ -364,7 +406,6 @@ export default function Main(){
                             socket.close();
                             socket = new SockJS("/socket");
                             // setChat([]);
-                            setSelect(response.data);
                             // 해당 방의 유저 정보
                             axios.get("/room/members/"+response.data, {
                                 headers : {
@@ -464,27 +505,8 @@ export default function Main(){
                                         className="roomBlock" onClick={(event) => {
                                             
                                             setNum(info[i].room_id);
-                                            // 해당 room_id를 서버에 보내 방의 토큰값을 받아와 소켓 연결을 시작
-                                            axios.get("/room/depart?id="+info[i].room_id, {
-                                                headers : {
-                                                    "access" : state.check
-                                                }
-                                            })
-                                            .then((response) => {
-                                                console.log(state.id + " " + info[i].room_leader)
-                                                if(state.id === info[i].room_leader)
-                                                    setLeader(true);
-                                                setSelect(response.data);
-                                            }).catch((error) => {
-                                                if(error.code === "ERR_BAD_REQUEST"){
-                                                    axios.post("/reissue").then((response) => {
-                                                        let temp = state;
-                                                        temp.chcek = response.headers.access
-                                                        setState(temp)
-                                    
-                                                    })
-                                                }
-                                            });
+                                            if(state.id === info[i].room_leader)
+                                                setLeader(true);
                                         }}>
                                             
                                             <div className="roomName">
@@ -550,7 +572,7 @@ export default function Main(){
 
         <div id="mainDiv">
             <div id="uploadPopup" style={{display : upload}}>
-                   { popupType }
+                { popupType }
             </div>
             <div id="chatList">
                 { chat }
@@ -562,6 +584,7 @@ export default function Main(){
                         let text = document.getElementById("chatText").value;
                         if(text === "") return;
                         if(event.code === "Enter"){
+                            console.log("select : " + select)
                             socket.send(JSON.stringify({
                                 chatRoomId : select,
                                 type : "SEND",
@@ -597,6 +620,7 @@ export default function Main(){
                     if(select === "") return;
                         let text = document.getElementById("chatText").value;
                         if(text === "") return;
+                        console.log("select : " + select)
                         socket.send(JSON.stringify({
                             chatRoomId : select,
                             type : "SEND",
@@ -663,6 +687,7 @@ export default function Main(){
                                         "access" : state.check
                                     }
                                 }).then((response) => {
+                                    
                                     socket.send(JSON.stringify({
                                         chatRoomId : select,
                                         type : "SEND",
@@ -851,26 +876,8 @@ export default function Main(){
                                                 
                                                 setNum(info[i].room_id);
                                                 // 해당 room_id를 서버에 보내 방의 토큰값을 받아와 소켓 연결을 시작
-                                                axios.get("/room/depart?id="+info[i].room_id, {
-                                                    headers : {
-                                                        "access" : state.check
-                                                    }
-                                                })
-                                                .then((response) => {
-                                                    console.log(state.id + " " + info[i].room_leader)
-                                                    if(state.id === info[i].room_leader)
-                                                        setLeader(true);
-                                                    setSelect(response.data);
-                                                }).catch((error) => {
-                                                    if(error.code === "ERR_BAD_REQUEST"){
-                                                        axios.post("/reissue").then((response) => {
-                                                            let temp = state;
-                                                            temp.chcek = response.headers.access
-                                                            setState(temp)
-                                        
-                                                        })
-                                                    }
-                                                });
+                                                if(state.id === info[i].room_leader)
+                                                    setLeader(true);
 
                                             }}>
                                                 <div className="roomName">
