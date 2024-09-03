@@ -1,0 +1,20 @@
+.clearTool{
+    display: none;
+}
+
+.clearContainer{
+    width: 100%;
+    border: 1px solid rgb(255,255,255)
+}
+
+.clearContainer div{
+    border: 1px solid rgb(255,255,255)
+}
+
+@page {
+
+    size: A4;
+
+    margin: 0;
+
+}

@@ -1,0 +1,58 @@
+#checkDiv{
+    margin: 15% auto;
+    max-width: 400px;
+    padding: 20px;
+    min-width: 260px;
+    width: 50%;
+    min-height: 45vh;
+    border: 1px solid rgb(84, 216, 84);
+    border-radius: 20px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+#checkDiv h2{
+    margin: 25px auto;
+    text-align: center;
+    position: relative;
+}
+
+
+#checkDiv input[type=text]{
+    width: 70%;
+    height: 25px;
+    border: none;
+    border-bottom: 1px solid rgb(84, 216, 84);
+}
+
+.checkBtn{
+    margin: 0px 10px;
+    width: 20%; 
+    height: 30px;
+    border-radius: 5px;
+    float: right;
+    transition: all 0.2s;
+    border: none;
+    color: rgb(255,255,255);
+    background-color: rgb(48,48,48);
+}
+
+.checkBtn:active{
+    color: rgb(255,255,255);
+    background-color: rgb(84, 216, 84);
+}
+
+
+#moveBtn{
+    margin: 15% auto;
+    display: block;
+    width: 50%;
+    height: 10%;
+    min-height: 35px;
+    border: none;
+    border-radius: 10px;
+    color: rgb(255,255,255);
+    background-color: rgb(48,48,48);
+    position: relative;
+    transition: all 0.2s;
+}

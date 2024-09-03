@@ -1,0 +1,411 @@
+/* 채팅방 목록 영역 */
+#roomDiv{
+    width: 25%;
+    height: 100vh;
+    z-index: 1;
+    text-align: center;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 30px rgb(0,0,0,0.3);
+    transition: all 0.2s;
+    overflow: hidden;
+    position: absolute;
+}
+
+.roomHeader{
+    width: 100%;
+    height: 8vh;
+    position: relative;
+}
+
+#roomName{
+    margin: 20px auto;
+    width: 65%;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(255, 255, 255);
+    text-indent: 10px;
+    box-shadow: 0px 0px 10px rgb(0,0,0,0.3);
+    
+}
+
+#roomBtn, .inviteBtn{
+    margin-left: 10px;
+    width: 20%;
+    min-width: 50px;
+    height: 35px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: rgb(48, 48, 48);
+    color: rgb(255, 255, 255);
+    transition: all 0.2s;
+}
+
+#roomBtn:active, .inviteBtn:active{
+    background-color: rgb(0, 165, 0);
+    color: rgb(255, 255, 255);
+}
+
+#roomList{
+    width: 100%;
+    height: 74vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+.roomBlock{
+    width: 100%;
+    height: 6vh;
+    clear: both;
+    transition: all 0.2s;
+}
+
+.roomBlock div{
+    float: left;
+}
+
+.roomIcon, .chatIcon{
+    margin: 10px 10px 0px;
+    width: 10%;
+    text-align: center;
+}
+
+.roomIcon img, .chatIcon img{
+    width: 100%;
+}
+
+.roomName{
+    margin: 18px 0px 0px;
+    width: 60%;
+    height: 30px;
+}
+
+#createBtnDiv{
+    bottom: 0;
+    position: relative;
+    width: 100%;
+    height: 10vh;
+    z-index: 1;
+}
+
+.createBtn{
+    margin: 0px auto 10px;
+    width: 70%;
+    height: 35px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(48,48,48);
+    font-size: 20px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    transition: all 0.2s;
+}
+
+.createBtn:active{
+    background-color: rgb(0, 165, 0);
+    color: rgb(255, 255, 255);
+}
+
+
+
+/* 채팅영역 */
+#mainDiv{
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background-color: rgb(248, 248, 248);
+    float: left;
+    transition: all 0.2s;
+}
+
+#mainDiv div{
+    float: left;
+}
+
+#chatList{
+    width: 90%;
+    height: 90vh;
+    position: relative;
+    overflow-y: auto;
+}
+
+.chatBlock{
+    margin: 20px 0 0px 3%;
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    background-color: rgb(240, 240, 240);
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(48,48,48,0.2);
+}
+.chatIcon{
+    float: left;
+    clear: both;
+    font-size: 2.5vw;
+}
+
+.chatContent{
+    margin-left: 2%;
+    width: 80%;
+    white-space: normal;
+    float: left;
+}
+
+.chatContent pre{
+    position: relative;
+    display: block;
+    width: 100%;
+    word-break:break-all;
+    white-space: normal;
+}
+
+.chatContent img{
+    width: 80%;
+}
+
+#chatInsert{
+    bottom: 0;
+    right: 10%;
+    position: fixed;
+    width: 90%;
+    height: 10vh;
+    transition: all 0.2s;
+}
+
+#chatText{
+    margin: 30px 2% 0px 5%;
+    width: 70%;
+    height: 4vh;
+    display: block;
+    float: left;
+    border: none;
+    background-color: rgb(235, 235, 235);
+    border-radius: 5px;
+    text-indent: 15px;
+    font-size: 18px;
+}
+
+#chatSend{
+    margin: 30px 0 0px;
+    width: 10%;
+    min-width: 50px;
+    height: 4vh;
+    border: none;
+    background-color: rgb(48, 48, 48);
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    transition: all 0.2s;
+}
+
+#chatSend:active{
+    background-color: rgb(255,255,255);
+    border: 1px solid rgb(48, 48, 48);
+    color: rgb(48, 48, 48);
+}
+
+
+/* 오른쪽 버튼 바 */
+#chatRemocon{
+    width: 10%;
+    height: 100vh;
+    background-color: rgb(255, 255, 255)
+}
+
+.remoconIcon{
+    margin: 15% 10% 0px;
+    width: 80%;
+}
+
+.remoconIcon img{
+    width: 100%;
+}
+
+/* 팝업 창 */
+/* 파일 업로드 */
+#uploadPopup{
+    margin: 20% 10%;
+    width: 80%;
+    height: 30vh;
+    min-height: 450px;
+    border-radius: 25px;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    z-index: 1;
+    box-shadow: 0px 0px 10px rgb(163, 163, 163);
+}
+
+#fileType{
+    margin: 30px auto;
+    width: 70%;
+    height: 8%;
+    display: block;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(235, 235, 235);
+}
+
+#fileRadio{
+    margin: 20px auto;
+    width: 70%;
+    height: 20%;
+    text-align: center;
+}
+
+#file{
+    margin: 0px auto 30px;
+    width: 70%;
+    display: block;
+}
+
+#uploadBtn, #closeBtn{
+    margin: 40px auto 0px;
+    display: block;
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(48, 48, 48);
+    color: rgb(255, 255, 255);
+    transition: all 0.2s;
+}
+
+#uploadBtn:active, #closeBtn:active{
+    border: 1px solid rgb(48, 48, 48);
+    background-color: rgb(255, 255, 255);
+    color: rgb(48, 48, 48);
+}
+
+#cancleBtn{
+    margin: 20px auto 0px;
+    display: block;
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(226, 0, 0);
+    color: rgb(255, 255, 255);
+    transition: all 0.2s;
+}
+
+#cancleBtn:active{
+    border: 1px solid rgb(48, 48, 48);
+    background-color: rgb(255, 255, 255);
+    color: rgb(48, 48, 48);
+}
+
+#uploadPopup h3, #uploadPopup p{
+    margin: 50px auto 30px;
+    font-size: 20px;
+    width: 60%;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+#uploadPopup p:active{
+    color: rgb(0, 165, 0);
+    font-weight: bold;
+}
+
+/* 초대 */
+#inviteId{
+    margin: 20px auto;
+    width: 100%;
+    text-align: center;
+}
+
+#inviteId input[type=text]{
+    width: 40%;
+    height: 30px;
+    text-indent: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(247, 247, 247);
+}
+
+.forcedBtn{
+    width: 15%;
+    height: 35px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(48, 48, 48);
+    border: none;
+    border-radius: 5px;
+    transition: all 0.2s;
+    float: right;
+}
+
+.forcedBtn:active{
+    background-color: rgb(0, 165, 0);
+}
+
+/* 초대 확인 */
+
+#uploadPopup > p{
+    width: 100%;
+    margin-top : 10px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#inviteList{
+    margin: -10px 10% 10px;
+    width: 80%;
+    height: 15vh;
+    overflow: auto;
+}
+
+.inviteBlock{
+    margin: 20px 10% 0px;
+    width: 80%;
+    height: 45px;
+    line-height: 45px;
+    text-indent: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: rgb(235, 235, 235)
+}
+
+.inviteBlock input[type=button]{
+    margin : 5px;
+    border: none;
+    background-color: rgb(0, 165, 0);
+    height: 35px;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    float: right;
+    transition: all 0.2s;
+}
+
+.inviteBlock input[type=button]:active{
+    background-color: rgba(0,0,0,0);
+    border : 1px solid rgb(0, 165, 0);
+    color: rgb(0, 165, 0);
+}
+
+/* 멤버 확인 */
+#memberBox{
+    width: 100%;
+    min-height: 10vh;
+    overflow: auto;
+    position: relative;
+    clear: both;
+}
+
+.memberBlock{
+    margin: 20px 25% 0px;
+    width: 50%;
+    height: 50px;
+    line-height: 50px;
+}
+
+.memberBlock > img{
+    width: 10%;
+    display: block;
+    float: left;
+}

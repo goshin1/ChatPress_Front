@@ -1,0 +1,166 @@
+#createDiv{
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(240, 240, 240);
+}
+
+/* 상단 메뉴 */
+#createHeader{
+    width: 100%;
+    height: auto;
+    line-height: 5vh;
+    z-index: 1;
+}
+
+/* 상단 메뉴 윗부분 */
+#createMainMenu{
+    width: 100%;
+    min-height: 5vh;
+    background-color:rgb(0, 165, 0);
+    position: relative;
+}
+
+#documentTitle{
+    margin: 0px 10px;
+    width: 10%;
+    height: 25px;
+    text-indent: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(84, 216, 84);
+}
+
+#documentTitle::placeholder{
+    color: rgb(0, 165, 0);
+}
+
+.mainBtn{
+    margin: 0px 10px;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(84, 216, 84);
+    color: rgb(0, 102, 0)
+}
+
+#imageUpload{
+    display: none;
+}
+
+.documentName{
+    margin: 0px 20px;
+    width: 10%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    
+}
+
+/* 제작페이지 몸통 */
+#createBody{
+    position: relative;
+}
+
+#createBody > div{
+    top: 0;
+    height: 90vh;
+}
+
+.ql-container{
+    margin: 0 auto;
+    width: 45%;
+    min-width: 300px;
+    top: 0;
+    min-height: 100%;
+    height: auto;
+    background-color: rgb(255,255,255);
+}
+
+.ql-editor {
+    overflow: auto;
+    min-height: 100%;
+    height: auto;
+    display: block;
+}
+
+
+.ql-container{
+    page-break-before: always;
+}
+
+
+
+
+/* 문서 목록 팝업 */
+.documentList{
+    top: 12%;
+    left: 35%;
+    width: 30%;
+    min-width: 250px;
+    height: auto;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+    position: absolute;
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.documentBox{
+    margin: 20px auto 20px;
+    height: 80%;
+    min-height: 150px;
+    width: 85%;
+    display: block;
+}
+
+.documentBlock{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-indent: 10px;
+    background-color: rgb(255, 255, 255);
+    border-bottom: 1px solid rgb(240, 240, 240);
+    border-radius: 5px;
+    position: relative;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.documentBlock:active{
+    background-color: rgb(84, 216, 84);
+}
+
+.loadCancle{
+    margin: 20px 45%;
+    width: 10%;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(84, 216, 84);
+    color: rgb(255, 255, 255);
+}
+
+/* 공식 스타일 */
+.controls {
+    display: flex;
+    border: 1px solid #ccc;
+    border-top: 0;
+    padding: 10px;
+}
+  
+.controls-right {
+    margin-left: auto;
+}
+  
+.state {
+    margin: 10px 0;
+    font-family: monospace;
+}
+  
+.state-title {
+    color: #999;
+    text-transform: uppercase;
+}
