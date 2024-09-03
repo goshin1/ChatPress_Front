@@ -585,13 +585,7 @@ export default function Main(){
                         if(text === "") return;
                         if(event.code === "Enter"){
                             console.log("select : " + select)
-                            socket.send(JSON.stringify({
-                                chatRoomId : select,
-                                type : "SEND",
-                                message : text,
-                                user : profile.user_nickname,
-                                fileType : "text"}));
-
+                            
                             axios.post("/chat/insert", {
                                 chat_user_nickname : profile.user_nickname,
                                 chat_message : text,
@@ -602,7 +596,12 @@ export default function Main(){
                                     "access" : state.check
                                 }
                             }).then(() => {
-
+                                socket.send(JSON.stringify({
+                                    chatRoomId : select,
+                                    type : "SEND",
+                                    message : text,
+                                    user : profile.user_nickname,
+                                    fileType : "text"}));
                             }).catch((error) => {
                                 if(error.code === "ERR_BAD_REQUEST"){
                                     axios.post("/reissue").then((response) => {
@@ -621,12 +620,7 @@ export default function Main(){
                         let text = document.getElementById("chatText").value;
                         if(text === "") return;
                         console.log("select : " + select)
-                        socket.send(JSON.stringify({
-                            chatRoomId : select,
-                            type : "SEND",
-                            message : text,
-                            user : profile.user_nickname,
-                            fileType : "text"}));
+                        
                         axios.post("/chat/insert", {
                             chat_user_nickname : profile.user_nickname,
                             chat_message : text,
@@ -637,7 +631,12 @@ export default function Main(){
                                 "access" : state.check
                             }
                         }).then(() => {
-
+                            socket.send(JSON.stringify({
+                                chatRoomId : select,
+                                type : "SEND",
+                                message : text,
+                                user : profile.user_nickname,
+                                fileType : "text"}));
                         }).catch((error) => {
                             if(error.code === "ERR_BAD_REQUEST"){
                                 axios.post("/reissue").then((response) => {
@@ -688,12 +687,6 @@ export default function Main(){
                                     }
                                 }).then((response) => {
                                     
-                                    socket.send(JSON.stringify({
-                                        chatRoomId : select,
-                                        type : "SEND",
-                                        message : response.data,
-                                        user : profile.user_nickname,
-                                        fileType : fileType}));
                                     axios.post("/chat/insert", {
                                             chat_user_nickname : profile.user_nickname,
                                             chat_message : response.data,
@@ -704,7 +697,12 @@ export default function Main(){
                                                 "access" : state.check
                                             }
                                         }).then(() => {
-            
+                                            socket.send(JSON.stringify({
+                                                chatRoomId : select,
+                                                type : "SEND",
+                                                message : response.data,
+                                                user : profile.user_nickname,
+                                                fileType : fileType}));
                                         }).catch((error) => {
                                             if(error.code === "ERR_BAD_REQUEST"){
                                                 axios.post("/reissue").then((response) => {
@@ -861,6 +859,10 @@ export default function Main(){
                         .then((response) => {
                             // 방조회 및 select를 초기화
                             if(response.status == 200){
+
+                                setSelect("");
+                                setNum(0);
+
                                 axios.get("/room/ulist", {
                                     headers : {
                                         "access" : state.check

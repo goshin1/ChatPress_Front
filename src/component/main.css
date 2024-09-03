@@ -1,10 +1,12 @@
+
 /* 채팅방 목록 영역 */
+
 #roomDiv{
     width: 25%;
     height: 100vh;
     z-index: 1;
     text-align: center;
-    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0px 0px 30px rgb(0,0,0,0.3);
     transition: all 0.2s;
     overflow: hidden;
@@ -130,6 +132,8 @@
     height: 90vh;
     position: relative;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .chatBlock{
