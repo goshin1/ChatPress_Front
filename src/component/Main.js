@@ -1,11 +1,15 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import "./main.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SockJS from "sockjs-client";
+import { Cookies } from "react-cookie";
+import moment from "moment";
 
 export default function Main(){
+
     const navigate = useNavigate();
+    const cookies = new Cookies();
     const location = useLocation();
     const [state, setState] = useState(location.state);
     const [leftBar, setLeftBar] = useState("0%"); // 옆에 바 활성화
@@ -19,86 +23,15 @@ export default function Main(){
     const [memberDict, setMemberDict] = useState({}); // 멤버 정보 목록
     const [leader, setLeader] = useState(false); // 방장일 경우 true    
 
-    // 채팅 블럭 테스트
-    // <div key={chat.length + 1} className="chatBlock">
-    //     <div className="chatIcon">
-    //         <img src={require("../img/menu.png")}/>
-    //         테스또
-    //     </div>
-    //     <div className="chatContent">
-    //         <pre>
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             dddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-    //             asdsadsadsada
-    //         </pre>
-    //     </div>
-    // </div>
-
-    // 소켓 연결을 함수화 해서 방을 클릭할 때 해당 토큰 값으로 바로 변경
-
-    // const socketConnect = () => {
-    //     let socket = new SockJS("/socket");
-    //     socket.onopen = () =>{
-    //         socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
-    //     }
-
-    //     socket.onmessage = (e) => {
-    //         let content = JSON.parse(e.data);
-    //         let type = content.type;
-    //         if(type == "SEND"){
-    //             let temp;
-    //             if(content.fileType === "text"){
-    //                 temp = <div className="chatContent">
-    //                             <pre>
-    //                                 {content.message}
-    //                             </pre>
-    //                         </div>;
-    //             }else if(content.fileType === "image"){
-    //                 temp = <div className="chatContent">
-    //                             <img src={content.message}/>
-    //                         </div>;
-    //             }else if(content.fileType === "file"){
-    //                 temp = <div className="chatContent">
-    //                             <a href={"http://localhost:8080"+content.message} download>파일 다운로드</a>
-    //                         </div>;
-    //             }
-                
-    //             chat.push(<div key={chat.length + 1} className="chatBlock">
-    //                 <div className="chatIcon">
-    //                     <img src={memberDict[content.user]}/>
-    //                     {content.user}
-    //                 </div>
-    //                 {temp}
-    //             </div>);
-                
-    //             setChat([...chat]);
-                
-    //         }
-    //     };
-
-    //     socket.onerror = (err) => {
-    //         socket.close();
-    //         socket = new SockJS("/socket")
-    //     }
-    // }
-
-    console.log(num + " : " + select)
 
     let socket = new SockJS("/socket");
-    
-    useEffect(() => {
-        console.log("room Change")
-        
-        console.log("socket start!")
-        
 
+    useEffect(() => {
+
+        if(num !== 0){
             axios.get("/chat/list?id=" + num, {
                 headers : {
-                    "access" : state.check
+                    "access" : cookies.get("access")
                 }
             })
             .then((response) => {
@@ -118,7 +51,7 @@ export default function Main(){
                                 </div>;
                     }else if(res[i].chat_type === "file"){
                         temp = <div className="chatContent">
-                                    <a href={"http://localhost:8080"+res[i].chat_message} download>파일 다운로드</a>
+                                    <a href={"http://211.188.51.27:8080"+res[i].chat_message} download>파일 다운로드</a>
                                 </div>;
                     }
 
@@ -139,23 +72,28 @@ export default function Main(){
                 
                 axios.get("/room/depart?id="+num, {
                     headers : {
-                        "access" : state.check
+                        "access" : cookies.get("access")
                     }
                 }).then((response) => {
                     setSelect(response.data)
+
+                    // 채팅방 멤버 정보 초기화가 늦는 문제를 해결하기 위해 테스트
+                    
                 })
 
             })
             .catch((error) => {
-                if(error.code === "ERR_BAD_REQUEST"){
+                if(error.response.data === "access token expired"){
                     axios.post("/reissue").then((response) => {
                         let temp = state;
                         temp.chcek = response.headers.access
+                        cookies.set("access", response.headers.access)
                         setState(temp)
     
                     })
                 }
             });
+        }
 
             
 
@@ -163,66 +101,100 @@ export default function Main(){
 
 
     useEffect(() => {
-        console.log("room change " + num + " : " + select)
-        socket.onopen = () =>{
-            socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
-        }
-
-        socket.onmessage = (e) => {
-            console.log("chat!")
-            let content = JSON.parse(e.data);
-            let type = content.type;
-            if(type == "SEND"){
-                let temp;
-                if(content.fileType === "text"){
-                    temp = <div className="chatContent">
-                                <pre>
-                                    {content.message}
-                                </pre>
-                            </div>;
-                }else if(content.fileType === "image"){
-                    temp = <div className="chatContent">
-                                <img src={content.message}/>
-                            </div>;
-                }else if(content.fileType === "file"){
-                    temp = <div className="chatContent">
-                                <a href={"http://localhost:8080"+content.message} download>파일 다운로드</a>
-                            </div>;
+        if(num !== 0 && select !== ""){
+            axios.get("/room/members/"+select, {
+                headers : {
+                    "access" : cookies.get("access")
                 }
-                
-                chat.push(<div key={chat.length + 1} className="chatBlock">
-                    <div className="chatIcon">
-                        <img src={memberDict[content.user]}/>
-                        {content.user}
-                    </div>
-                    {temp}
-                </div>);
-                console.log("소켓 시 채팅 배열 근황")
-                console.log(chat)
-                setChat([...chat]);
-                
-            }
-        };
+            }).then((response) => {
+                let temp = {};
+                for(let i = 0; i < response.data.length; i++){
+                    temp[response.data[i].user_nickname]=response.data[i].user_icon_path;
+                }
+                setMemberDict(temp);
+            }).catch((error) => {
+                if(error.response.data === "access token expired"){
+                    axios.post("/reissue").then((response) => {
+                        let temp = state;
+                        temp.chcek = response.headers.access
+                        cookies.set("access", response.headers.access)
+                        setState(temp)
     
-        socket.onerror = (err) => {
-            socket.close();
-            socket = new SockJS("/socket")
+                    })
+                }
+            });
+
+
+
+            socket.onopen = () =>{
+                socket.send(JSON.stringify({chatRoomId : select, type : "JOIN"}));
+            }
+    
+            socket.onmessage = (e) => {
+                let content = JSON.parse(e.data);
+                let type = content.type;
+                if(type == "SEND"){
+                    let temp;
+                    if(content.fileType === "forced"){
+                        if(content.message === profile.id){
+                            alert("퇴장 당하셨습니다.");
+                            
+                            setSelect("");
+                            setNum(0);
+                            setChat([]);
+                            return;
+                        }
+
+                    }else if(content.fileType === "text"){
+                        temp = <div className="chatContent">
+                                    <pre>
+                                        {content.message}
+                                    </pre>
+                                </div>;
+                    }else if(content.fileType === "image"){
+                        temp = <div className="chatContent">
+                                    <img src={content.message}/>
+                                </div>;
+                    }else if(content.fileType === "file"){
+                        temp = <div className="chatContent">
+                                    <a href={"http://211.188.51.27:8080"+content.message} download>파일 다운로드</a>
+                                </div>;
+                    }
+                    
+                    chat.push(<div key={chat.length + 1} className="chatBlock">
+                        <div className="chatIcon">
+                            <img src={memberDict[content.user]}/>
+                            {content.user}
+                        </div>
+                        {temp}
+                    </div>);
+                    setChat([...chat]);
+                    
+                }else if(type === "JOIN"){
+                    
+                }
+            };
+        
+            socket.onerror = (err) => {
+                socket.close();
+                socket = new SockJS("/socket")
+            }
         }
     }, [select]);
 
     useEffect(() => {
-        console.log("init")
         axios.get("/user/info", {
             headers : {
-                "access" : state.check
+                "access" : cookies.get("access")
             }
         }).then((response) => {
             setProfile(response.data)
         }).catch((error) => {
-            if(error.code === "ERR_BAD_REQUEST"){
+            if(error.response.data === "access token expired"){
                 axios.post("/reissue").then((response) => {
                     let temp = state;
                     temp.chcek = response.headers.access
+                    cookies.set("access", response.headers.access)
                     setState(temp)
 
                 })
@@ -232,10 +204,9 @@ export default function Main(){
         // 초대 목록 조회
         axios.get("/invite/list", {
             headers : {
-                "access" : state.check
+                "access" : cookies.get("access")
             }
         }).then((response) => {
-            console.log(response.data)
             if(response.data.length > 0){
                 let temp = [];
                 for(let i = 0; i < response.data.length; i++){
@@ -245,40 +216,63 @@ export default function Main(){
                             <input className="entryBtn" type="button" value="입장" onClick={() => {
                                 axios.get("/invite/exit?code="+response.data[i].room_token, {
                                     headers : {
-                                        "access" : state.check
+                                        "access" : cookies.get("access")
                                     }
                                 }).then((response) => {
                                     if(response.status !== 200){
                                         return;
                                     }
                                 }).catch((error) => {
-                                    if(error.code === "ERR_BAD_REQUEST"){
+                                    if(error.response.data === "access token expired"){
                                         axios.post("/reissue").then((response) => {
                                             let temp = state;
                                             temp.chcek = response.headers.access
+                                            cookies.set("access", response.headers.access)
                                             setState(temp)
                         
                                         })
                                     }
                                 });
                                 
-                                console.log("리스트 "+response.data[i].room_token)
                                 axios.get("/room/code?code="+response.data[i].room_token, {
                                     headers : {
-                                        "access" : state.check
+                                        "access" : cookies.get("access")
                                     }
                                 })
                                 .then((response) => {
-                                    console.log("결과 " + response.data === "Ok")
                                     if(response.data === "Ok"){
                                         axios.get("/room/ulist", {
                                             headers : {
-                                                "access" : state.check
+                                                "access" : cookies.get("access")
                                             }
                                         })
                                         .then(response => {
                                             let info = response.data;
                                             let block = [];
+
+                                            if(info.length <= 0) return;
+                                            axios.get("/room/members/"+info[0].room_token, {
+                                                headers : {
+                                                    "access" : cookies.get("access")
+                                                }
+                                            }).then((response) => {
+                                                let temp = {};
+                                                for(let i = 0; i < response.data.length; i++){
+                                                    temp[response.data[i].user_nickname]=response.data[i].user_icon_path;
+                                                }
+                                                setMemberDict(temp);
+                                            }).catch((error) => {
+                                                if(error.response.data === "access token expired"){
+                                                    axios.post("/reissue").then((response) => {
+                                                        let temp = state;
+                                                        temp.chcek = response.headers.access
+                                                        cookies.set("access", response.headers.access)
+                                                        setState(temp)
+                                    
+                                                    })
+                                                }
+                                            }); 
+
                                             for(let i = 0; i < info.length; i++){
                                                 block.push(
                                                     <div id={"room_" + info[i].room_id} key={"room_" + info[i].room_id}
@@ -298,10 +292,11 @@ export default function Main(){
             
                                             setRoom(block);
                                         }).catch((error) => {
-                                            if(error.code === "ERR_BAD_REQUEST"){
+                                            if(error.response.data === "access token expired"){
                                                 axios.post("/reissue").then((response) => {
                                                     let temp = state;
                                                     temp.chcek = response.headers.access
+                                                    cookies.set("access", response.headers.access)
                                                     setState(temp)
                                 
                                                 })
@@ -309,10 +304,11 @@ export default function Main(){
                                         });
                                     }
                                 }).catch((error) => {
-                                    if(error.code === "ERR_BAD_REQUEST"){
+                                    if(error.response.data === "access token expired"){
                                         axios.post("/reissue").then((response) => {
                                             let temp = state;
                                             temp.chcek = response.headers.access
+                                            cookies.set("access", response.headers.access)
                                             setState(temp)
                         
                                         })
@@ -340,10 +336,11 @@ export default function Main(){
                 )
             }
         }).catch((error) => {
-            if(error.code === "ERR_BAD_REQUEST"){
+            if(error.response.data === "access token expired"){
                 axios.post("/reissue").then((response) => {
                     let temp = state;
                     temp.chcek = response.headers.access
+                    cookies.set("access", response.headers.access)
                     setState(temp)
 
                 })
@@ -354,20 +351,18 @@ export default function Main(){
         // 해당 유저에 방을 조회
         axios.get("/room/ulist", {
             headers : {
-                "access" : state.check
+                "access" : cookies.get("access")
             }
         })
         .then(response => {
             let info = response.data;
-            console.log(info)
             // 초기 정보 설정(초기화 함으로써 처음을 설정)
             if(response.data.length <= 0) return;
-            console.log(state.id + " " + info[0].room_leader)
             if(state.id === info[0].room_leader)
                 setLeader(true);
-            axios.get("/room/members/"+response.data[0].room_token, {
+            axios.get("/room/members/"+info[0].room_token, {
                 headers : {
-                    "access" : state.check
+                    "access" : cookies.get("access")
                 }
             }).then((response) => {
                 let temp = {};
@@ -376,15 +371,17 @@ export default function Main(){
                 }
                 setMemberDict(temp);
             }).catch((error) => {
-                if(error.code === "ERR_BAD_REQUEST"){
+                if(error.response.data === "access token expired"){
                     axios.post("/reissue").then((response) => {
                         let temp = state;
                         temp.chcek = response.headers.access
+                        cookies.set("access", response.headers.access)
                         setState(temp)
     
                     })
                 }
-            });
+            }); 
+
 
             // 방 목록 생성
             let block = [];
@@ -396,11 +393,10 @@ export default function Main(){
                         setNum(info[i].room_id);
                         axios.get("/room/depart?id="+info[i].room_id, {
                             headers : {
-                                "access" : state.check
+                                "access" : cookies.get("access")
                             }
                         })
                         .then((response) => {
-                            console.log(state.id + " " + info[i].room_leader)
                             if(state.id === info[i].room_leader)
                                 setLeader(true);
                             socket.close();
@@ -409,7 +405,7 @@ export default function Main(){
                             // 해당 방의 유저 정보
                             axios.get("/room/members/"+response.data, {
                                 headers : {
-                                    "access" : state.check
+                                    "access" : cookies.get("access")
                                 }
                             }).then((response) => {
                                 let temp = {};
@@ -418,20 +414,22 @@ export default function Main(){
                                 }
                                 setMemberDict(temp);
                             }).catch((error) => {
-                                if(error.code === "ERR_BAD_REQUEST"){
+                                if(error.response.data === "access token expired"){
                                     axios.post("/reissue").then((response) => {
                                         let temp = state;
                                         temp.chcek = response.headers.access
+                                        cookies.set("access", response.headers.access)
                                         setState(temp)
                     
                                     })
                                 }
                             });
                         }).catch((error) => {
-                            if(error.code === "ERR_BAD_REQUEST"){
+                            if(error.response.data === "access token expired"){
                                 axios.post("/reissue").then((response) => {
                                     let temp = state;
                                     temp.chcek = response.headers.access
+                                    cookies.set("access", response.headers.access)
                                     setState(temp)
                 
                                 })
@@ -449,10 +447,11 @@ export default function Main(){
 
             setRoom(block);
         }).catch((error) => {
-            if(error.code === "ERR_BAD_REQUEST"){
+            if(error.response.data === "access token expired"){
                 axios.post("/reissue").then((response) => {
                     let temp = state;
                     temp.chcek = response.headers.access
+                    cookies.set("access", response.headers.access)
                     setState(temp)
 
                 })
@@ -466,7 +465,7 @@ export default function Main(){
         if(arr[i].id === "room_"+num){
             document.getElementById(arr[i].id).style.backgroundColor = "rgb(230,230,230)";
         }else{
-            document.getElementById(arr[i].id).style.backgroundColor = "rgba(255,0,0,0)";
+            document.getElementById(arr[i].id).style.backgroundColor = "rgba(0,0,0,0)";
         }
     }
 
@@ -485,7 +484,7 @@ export default function Main(){
 
                     axios.get(`/room/create?name=`+roomName, {
                         headers : {
-                            "access" : state.check
+                            "access" : cookies.get("access")
                         }
                     })
                     .then((response) => {
@@ -493,12 +492,40 @@ export default function Main(){
                             alert("방이 생성되었습니다");
                             axios.get("/room/ulist", {
                                 headers : {
-                                    "access" : state.check
+                                    "access" : cookies.get("access")
                                 }
                             })
                             .then(response => {
                                 let info = response.data;
                                 let block = [];
+
+                                // 회원 정보 초기화
+                                if(info.length <= 0) return;
+                                if(state.id === info[0].room_leader)
+                                    setLeader(true);
+                                axios.get("/room/members/"+info[0].room_token, {
+                                    headers : {
+                                        "access" : cookies.get("access")
+                                    }
+                                }).then((response) => {
+                                    let temp = {};
+                                    for(let i = 0; i < response.data.length; i++){
+                                        temp[response.data[i].user_nickname]=response.data[i].user_icon_path;
+                                    }
+                                    setMemberDict(temp);
+                                }).catch((error) => {
+                                    if(error.response.data === "access token expired"){
+                                        axios.post("/reissue").then((response) => {
+                                            let temp = state;
+                                            temp.chcek = response.headers.access
+                                            cookies.set("access", response.headers.access)
+                                            setState(temp)
+                        
+                                        })
+                                    }
+                                }); 
+
+
                                 for(let i = 0; i < info.length; i++){
                                     block.push(
                                         <div id={"room_" + info[i].room_id} key={"room_" + info[i].room_id}
@@ -518,10 +545,11 @@ export default function Main(){
 
                                 setRoom(block);
                             }).catch((error) => {
-                                if(error.code === "ERR_BAD_REQUEST"){
+                                if(error.response.data === "access token expired"){
                                     axios.post("/reissue").then((response) => {
                                         let temp = state;
                                         temp.chcek = response.headers.access
+                                        cookies.set("access", response.headers.access)
                                         setState(temp)
                     
                                     })
@@ -529,22 +557,14 @@ export default function Main(){
                             });
                         }
                     }).catch((error) => {
-                        if(error.code === "ERR_BAD_REQUEST"){
+                        if(error.response.data === "access token expired"){
                             axios.post("/reissue").then((response) => {
                                 let temp = state;
                                 temp.chcek = response.headers.access
+                                cookies.set("access", response.headers.access)
                                 setState(temp)
             
-                            }).catch((error) => {
-                                if(error.code === "ERR_BAD_REQUEST"){
-                                    axios.post("/reissue").then((response) => {
-                                        let temp = state;
-                                        temp.chcek = response.headers.access
-                                        setState(temp)
-                    
-                                    })
-                                }
-                            });
+                            })
                         }
                     });
                 }}/>
@@ -566,6 +586,9 @@ export default function Main(){
                         state : state
                     })
                 }}/>
+                <p id="emailInfo" style={{color : 'rgb(160,160,160)', fontSize : '10px'}}>
+                    문의사항은 chatpressinfo@gmail.com으로 메일 부탁드립니다.
+                </p>
             </div>
         </div>
 
@@ -575,23 +598,14 @@ export default function Main(){
                 { popupType }
             </div>
             <div id="chatList">
-                { chat }
-                
-
+                { [...chat].reverse() }
                 <div id="chatInsert">
                     <input type="text" id="chatText" name="chatText" onKeyDown={(event) => {
-                    if(select === "") return;
+                        if(select === "") return;
                         let text = document.getElementById("chatText").value;
                         if(text === "") return;
-                        if(event.code === "Enter"){
-                            console.log("select : " + select)
-                            socket.send(JSON.stringify({
-                                chatRoomId : select,
-                                type : "SEND",
-                                message : text,
-                                user : profile.user_nickname,
-                                fileType : "text"}));
-
+                        if(event.code === "Enter" && event.nativeEvent.isComposing === false){
+                            
                             axios.post("/chat/insert", {
                                 chat_user_nickname : profile.user_nickname,
                                 chat_message : text,
@@ -599,15 +613,21 @@ export default function Main(){
                                 room_id : num
                             }, {
                                 headers : {
-                                    "access" : state.check
+                                    "access" : cookies.get("access")
                                 }
                             }).then(() => {
-
+                                socket.send(JSON.stringify({
+                                    chatRoomId : select,
+                                    type : "SEND",
+                                    message : text,
+                                    user : profile.user_nickname,
+                                    fileType : "text"}));
                             }).catch((error) => {
-                                if(error.code === "ERR_BAD_REQUEST"){
+                                if(error.response.data === "access token expired"){
                                     axios.post("/reissue").then((response) => {
                                         let temp = state;
                                         temp.chcek = response.headers.access
+                                        cookies.set("access", response.headers.access)
                                         setState(temp)
                     
                                     })
@@ -620,13 +640,7 @@ export default function Main(){
                     if(select === "") return;
                         let text = document.getElementById("chatText").value;
                         if(text === "") return;
-                        console.log("select : " + select)
-                        socket.send(JSON.stringify({
-                            chatRoomId : select,
-                            type : "SEND",
-                            message : text,
-                            user : profile.user_nickname,
-                            fileType : "text"}));
+                        
                         axios.post("/chat/insert", {
                             chat_user_nickname : profile.user_nickname,
                             chat_message : text,
@@ -634,15 +648,21 @@ export default function Main(){
                             room_id : num
                         }, {
                             headers : {
-                                "access" : state.check
+                                "access" : cookies.get("access")
                             }
                         }).then(() => {
-
+                            socket.send(JSON.stringify({
+                                chatRoomId : select,
+                                type : "SEND",
+                                message : text,
+                                user : profile.user_nickname,
+                                fileType : "text"}));
                         }).catch((error) => {
-                            if(error.code === "ERR_BAD_REQUEST"){
+                            if(error.response.data === "access token expired"){
                                 axios.post("/reissue").then((response) => {
                                     let temp = state;
                                     temp.chcek = response.headers.access
+                                    cookies.set("access", response.headers.access)
                                     setState(temp)
                 
                                 })
@@ -653,8 +673,11 @@ export default function Main(){
                 </div>
             </div>
             <div id="chatRemocon">
+                <div className="remoconIcon">
+                    <img src={require("../img/chatpressIcon.png")}/>
+                </div>
                 <div className="remoconIcon" onClick={() => {
-                    setLeftBar(leftBar === "0%" ? "90%" : "0%")
+                    setLeftBar(leftBar === "0%" ? "92%" : "0%")
                 }}>
                     <img src={require("../img/menu.png")}/>
                 </div>
@@ -684,16 +707,9 @@ export default function Main(){
                                 axios.post("/message/upload", formData, {
                                     headers : {
                                         "Content-Type" : "multipart/form-data",
-                                        "access" : state.check
+                                        "access" : cookies.get("access")
                                     }
                                 }).then((response) => {
-                                    
-                                    socket.send(JSON.stringify({
-                                        chatRoomId : select,
-                                        type : "SEND",
-                                        message : response.data,
-                                        user : profile.user_nickname,
-                                        fileType : fileType}));
                                     axios.post("/chat/insert", {
                                             chat_user_nickname : profile.user_nickname,
                                             chat_message : response.data,
@@ -701,25 +717,32 @@ export default function Main(){
                                             room_id : num
                                         }, {
                                             headers : {
-                                                "access" : state.check
+                                                "access" : cookies.get("access")
                                             }
                                         }).then(() => {
-            
+                                            socket.send(JSON.stringify({
+                                                chatRoomId : select,
+                                                type : "SEND",
+                                                message : response.data,
+                                                user : profile.user_nickname,
+                                                fileType : fileType}));
                                         }).catch((error) => {
-                                            if(error.code === "ERR_BAD_REQUEST"){
+                                            if(error.response.data === "access token expired"){
                                                 axios.post("/reissue").then((response) => {
                                                     let temp = state;
                                                     temp.chcek = response.headers.access
+                                                    cookies.set("access", response.headers.access)
                                                     setState(temp)
                                 
                                                 })
                                             }
                                         });
                                 }).catch((error) => {
-                                    if(error.code === "ERR_BAD_REQUEST"){
+                                    if(error.response.data === "access token expired"){
                                         axios.post("/reissue").then((response) => {
                                             let temp = state;
                                             temp.chcek = response.headers.access
+                                            cookies.set("access", response.headers.access)
                                             setState(temp)
                         
                                         })
@@ -754,22 +777,35 @@ export default function Main(){
 
                             axios.post("/invite/member", formData , {
                                 headers : {
-                                    "access" : state.check
+                                    "access" : cookies.get("access")
                                 }
                             }).then((response) => {
                                 if(response.status === 200){
-                                    setUpload("none");
-                                    setPopupType();
+                                    // check
+                                    axios.get("/room/members/"+select, {
+                                        headers : {
+                                            "access" : cookies.get("access")
+                                        }
+                                    }).then((response) => {
+                                        let temp = {};
+                                        for(let i = 0; i < response.data.length; i++){
+                                            temp[response.data[i].user_nickname]=response.data[i].user_icon_path;
+                                        }
+                                        setMemberDict(temp);
+                                        setUpload("none");
+                                        setPopupType();
+                                    })
                                 }else{
                                     alert("오류")
                                     setUpload("none");
                                     setPopupType();
                                 }
                             }).catch((error) => {
-                                if(error.code === "ERR_BAD_REQUEST"){
+                                if(error.response.data === "access token expired"){
                                     axios.post("/reissue").then((response) => {
                                         let temp = state;
                                         temp.chcek = response.headers.access
+                                        cookies.set("access", response.headers.access)
                                         setState(temp)
                     
                                     })
@@ -790,10 +826,10 @@ export default function Main(){
                     // 멤버 확인
                     axios.get("/room/members/"+select, {
                         headers : {
-                            "access" : state.check
+                            "access" : cookies.get("access")
                         }
                     })
-                     .then((response) => {
+                    .then((response) => {
                         let res = response.data;
                         let temp = [];
                         for(let i = 0; i < res.length; i++){
@@ -801,7 +837,7 @@ export default function Main(){
                             <div key={i} className="memberBlock">
                                 <img src={res[i].user_icon_path}/>
                                 {res[i].user_nickname}
-                                {leader ? // 방장일 경우에만 강퇴버튼을 활성화
+                                {/* {leader ? // 방장일 경우에만 강퇴버튼을 활성화
                                     <input type="button" className="forcedBtn" style={{display : leader ? "block" : "none"}} value="퇴장" onClick={() => {
                                         if(leader){
                                             axios.get("/room/forced?id="+res[i].id+"&code="+select)
@@ -810,17 +846,18 @@ export default function Main(){
                                                         console.log("sucess")
                                                     }
                                                 }).catch((error) => {
-                                                    if(error.code === "ERR_BAD_REQUEST"){
+                                                    if(error.response.data === "access token expired"){
                                                         axios.post("/reissue").then((response) => {
                                                             let temp = state;
                                                             temp.chcek = response.headers.access
+                                                            cookies.set("access", response.headers.access)
                                                             setState(temp)
                                         
                                                         })
                                                     }
                                                 });
                                         }
-                                    }}/> : ""}
+                                    }}/> : ""} */}
                             </div>);
                         }
                         setUpload("block");
@@ -835,10 +872,11 @@ export default function Main(){
                             }}/>
                         </>);
                     }).catch((error) => {
-                        if(error.code === "ERR_BAD_REQUEST"){
+                        if(error.response.data === "access token expired"){
                             axios.post("/reissue").then((response) => {
                                 let temp = state;
                                 temp.chcek = response.headers.access
+                                cookies.set("access", response.headers.access)
                                 setState(temp)
             
                             })
@@ -849,13 +887,99 @@ export default function Main(){
                     <img src={require("../img/checkMember.png")}/>
                 </div>
                 <div className="remoconIcon" onClick={() => {
+                    axios.get("/document/list", {
+                        headers : {
+                            "access" : cookies.get("access")
+                        }
+                    }).then((response) => {
+                        
+                        if(response.status === 200){
+                            let temp = [];
+                            for(let i = 0; i < response.data.length; i++){
+                                temp.push(<div className="documentBlock" onClick={() => {
+                                    // 해당 문서의 공유 기능 만들기
+                                }}>
+                                    {response.data[i].document_name}
+
+                                    <input type="button" className="shareBtn" style={{background : "rgb(250,10,10)"}} value="삭제" onClick={() => {
+                                        if(window.confirm(`${response.data[i].document_name} 문서를 삭제하실껀가요?`) === false) return
+                                        axios.get("/document/delete?documentId="+response.data[i].document_id, {
+                                            headers : {
+                                                "access" : cookies.get("access")
+                                            }
+                                        }).then((response) => {
+                                            if(response.status === 200){
+                                                alert("삭제되었습니다.");
+                                                setUpload("none");
+                                                setPopupType()
+                                            }
+                                        });
+
+                                    }}/>
+
+                                    <input type="button" className="shareBtn" style={{background : "rgb(84, 216, 84)"}} value="공유" onClick={() => {
+                                        axios.get("/share/load?documentId="+response.data[i].document_id, {
+                                            headers : {
+                                                "access" : cookies.get("access")
+                                            }
+                                        }).then((response) => {
+                                            if(select === "") return;
+                                            axios.post("/chat/insert", {
+                                                chat_user_nickname : profile.user_nickname,
+                                                chat_message : `<a href=${"http://211.188.51.27:8080/#/create/"+response.data.share_code}>문서 공유</a>`,
+                                                chat_type : "text",
+                                                room_id : num
+                                            }, {
+                                                headers : {
+                                                    "access" : cookies.get("access")
+                                                }
+                                            }).then(() => {
+                                                socket.send(JSON.stringify({
+                                                    chatRoomId : select,
+                                                    type : "SEND",
+                                                    message : `${"http://211.188.51.27:8080/#/create/"+response.data.share_code}`,
+                                                    user : profile.user_nickname,
+                                                    fileType : "text"}));
+                                            }).catch((error) => {
+                                                if(error.response.data === "access token expired"){
+                                                    axios.post("/reissue").then((response) => {
+                                                        let temp = state;
+                                                        temp.chcek = response.headers.access
+                                                        cookies.set("access", response.headers.access)
+                                                        setState(temp)
+                                    
+                                                    })
+                                                }
+                                            });
+                                        });
+
+                                    }}/>
+                                </div>)
+                            }
+                            setUpload("block");
+                            setPopupType(<>
+                                <h3>문서 목록</h3>
+                                <div className="documentMainBox">
+                                    {temp}
+                                </div>
+                                <input type="button" id="closeBtn" value="닫기" onClick={() => {
+                                    setUpload("none");
+                                    setPopupType();
+                                }}/>
+                            </>)
+                        }
+                    })
+                    }}>
+                    <img src={require("../img/document.png")}/>
+                    </div>
+                <div className="remoconIcon" onClick={() => {
                     if(select === "") return;
                     // alert같은 확인하는 팝업창을 띄워서 동의하면 나가기로
                     // 나가기 버튼
                     if(window.confirm("채팅방을 나가시겠습니까?")){
                         axios.get("/room/exit/"+select, {
                             headers : {
-                                "access" : state.check
+                                "access" : cookies.get("access")
                             }
                         })
                         .then((response) => {
@@ -863,7 +987,7 @@ export default function Main(){
                             if(response.status == 200){
                                 axios.get("/room/ulist", {
                                     headers : {
-                                        "access" : state.check
+                                        "access" : cookies.get("access")
                                     }
                                 })
                                 .then(response => {
@@ -886,13 +1010,14 @@ export default function Main(){
                                             </div>
                                         );
                                     }
-
+                                    setChat([]);
                                     setRoom(block);
                                 }).catch((error) => {
-                                    if(error.code === "ERR_BAD_REQUEST"){
+                                    if(error.response.data === "access token expired"){
                                         axios.post("/reissue").then((response) => {
                                             let temp = state;
                                             temp.chcek = response.headers.access
+                                            cookies.set("access", response.headers.access)
                                             setState(temp)
                         
                                         })
@@ -900,10 +1025,11 @@ export default function Main(){
                                 });
                             }
                         }).catch((error) => {
-                            if(error.code === "ERR_BAD_REQUEST"){
+                            if(error.response.data === "access token expired"){
                                 axios.post("/reissue").then((response) => {
                                     let temp = state;
                                     temp.chcek = response.headers.access
+                                    cookies.set("access", response.headers.access)
                                     setState(temp)
                 
                                 })
@@ -914,6 +1040,8 @@ export default function Main(){
                 }}>
                     <img src={require("../img/exit.png")}/>
                 </div>
+
+                
             </div>
         </div>
     </div>

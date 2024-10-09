@@ -4,7 +4,7 @@
     height: 100vh;
     z-index: 1;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255,255,255,0.5);
     box-shadow: 0px 0px 30px rgb(0,0,0,0.3);
     transition: all 0.2s;
     overflow: hidden;
@@ -12,6 +12,8 @@
 }
 
 .roomHeader{
+    margin: 0 auto;
+    max-width: 600px;
     width: 100%;
     height: 8vh;
     position: relative;
@@ -61,6 +63,7 @@
     height: 6vh;
     clear: both;
     transition: all 0.2s;
+    text-align: center;
 }
 
 .roomBlock div{
@@ -109,7 +112,19 @@
     color: rgb(255, 255, 255);
 }
 
+@media (min-width : 1000px){
+    .roomBlock{
+        margin: 20px auto;
+        max-width: 600px;
+        border-radius: 15px;
+        
+    }
 
+    #createBtnDiv{
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
 
 /* 채팅영역 */
 #mainDiv{
@@ -126,16 +141,16 @@
 }
 
 #chatList{
-    width: 90%;
+    width: 92%;
     height: 90vh;
     position: relative;
     overflow-y: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 
 .chatBlock{
-    margin: 20px 0 0px 3%;
+    margin: 0px 0px 15px 2%;
     width: 90%;
     height: auto;
     padding: 10px;
@@ -213,14 +228,15 @@
 
 /* 오른쪽 버튼 바 */
 #chatRemocon{
-    width: 10%;
+    width: 8%;
     height: 100vh;
-    background-color: rgb(255, 255, 255)
+    background-color: rgb(246,246,246);
+    box-shadow: 0px 0px 10px rgba(48,48,48,0.2);
 }
 
 .remoconIcon{
-    margin: 15% 10% 0px;
-    width: 80%;
+    margin: 15% 15% 0px;
+    width: 70%;
 }
 
 .remoconIcon img{
@@ -230,15 +246,16 @@
 /* 팝업 창 */
 /* 파일 업로드 */
 #uploadPopup{
-    margin: 20% 10%;
-    width: 80%;
-    height: 30vh;
-    min-height: 450px;
+    background-color: #fff;
     border-radius: 25px;
-    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 10px #a3a3a3;
+    height: auto;
+    margin: 10% 12%;
+    max-width: 500px;
     position: absolute;
+    width: 76%;
     z-index: 1;
-    box-shadow: 0px 0px 10px rgb(163, 163, 163);
+    padding-bottom: 20px
 }
 
 #fileType{
@@ -252,7 +269,7 @@
 }
 
 #fileRadio{
-    margin: 20px auto;
+    margin: 20px 15%;
     width: 70%;
     height: 20%;
     text-align: center;
@@ -316,7 +333,7 @@
 
 /* 초대 */
 #inviteId{
-    margin: 20px auto;
+    margin: 0px auto 40px;
     width: 100%;
     text-align: center;
 }
@@ -331,14 +348,15 @@
 }
 
 .forcedBtn{
-    width: 15%;
-    height: 35px;
-    color: rgb(255, 255, 255);
-    background-color: rgb(48, 48, 48);
+    background-color: #303030;
     border: none;
     border-radius: 5px;
-    transition: all 0.2s;
+    color: #fff;
     float: right;
+    height: 35px;
+    transition: all .2s;
+    width: 20%;
+    min-width: 50px;
 }
 
 .forcedBtn:active{
@@ -393,17 +411,17 @@
 /* 멤버 확인 */
 #memberBox{
     width: 100%;
-    min-height: 10vh;
+    min-height: 30vh;
     overflow: auto;
     position: relative;
     clear: both;
 }
 
 .memberBlock{
-    margin: 20px 25% 0px;
-    width: 50%;
     height: 50px;
     line-height: 50px;
+    margin: 20px 10% 0px;
+    width: 80%;
 }
 
 .memberBlock > img{

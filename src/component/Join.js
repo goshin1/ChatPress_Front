@@ -64,6 +64,7 @@ export default function Join(){
                         if(response.data === -1){
                             alert("존재하지 않는 이메일입니다.")
                         }else{
+                            alert("전송 되었습니다.")
                             setNumber(response.data.toString());
                         }
                     })
@@ -82,11 +83,11 @@ export default function Join(){
                     
                     console.log(number)
                     if(number === document.getElementById("codeCheck").value){
-                        alert("일치");
+                        alert("인증번호가 일치합니다.");
                         setEmailCheck(true);
                         
                     }else{
-                        alert("틀림");
+                        alert("인증번호가 틀립니다.");
                         setEmailCheck(false);
                     }
                 }}/>
@@ -101,17 +102,17 @@ export default function Join(){
             <input type="button" id="iconBtn" value="아이콘 업로드" onClick={() => {
                 document.getElementById("join_file").click();
             }}/>
-            <input type="file" id="join_file" name="file" onChange={(event) => {
+            <input type="file" id="join_file" name="file" accept=".jpg, .jpeg, .png, .gif" onChange={(event) => {
                 console.log(event)
                 if (event.target.files && event.target.files[0]) {
                     var reader = new FileReader();
                     reader.onload = function(e) {
-                      document.getElementById('iconPreview').src = e.target.result;
+                        document.getElementById('iconPreview').src = e.target.result;
                     };
                     reader.readAsDataURL(event.target.files[0]);
-                  } else {
+                } else {
                     document.getElementById('iconPreview').src = "";
-                  }
+                }
             }}/>
         </label>
         <label>
@@ -164,6 +165,11 @@ export default function Join(){
                 return
             }
 
+
+            if(document.getElementById("join_file").files.length <= 0){
+                alert("아이콘을 설정해주세요.")
+                return
+            }
             
 
 

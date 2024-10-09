@@ -8,6 +8,9 @@ import Create from './component/Create';
 import Preview from './component/Preview';
 import Search from './component/Search';
 import Edit from './component/Edit';
+import NotFound from './component/NotFound';
+
+import Test from './component/Test';
 
 function App() {
   return (
@@ -18,9 +21,12 @@ function App() {
           <Route exact path='/join' element={<Join></Join>}></Route>
           <Route exact path='/main' element={<Main></Main>}></Route>
           <Route exact path='/create' element={<Create></Create>}></Route>
+          <Route exact path='/create/:documentCode' element={<Create></Create>}></Route>
           <Route exact path='/preview' element={<Preview></Preview>}></Route>
           <Route exact path='/search' element={<Search></Search>}></Route>
           <Route exact path='/edit' element={<Edit></Edit>}></Route>
+          <Route exact path='/test' element={<Test></Test>}></Route>
+          <Route path="/*" element={<NotFound></NotFound>} />
         </Routes>
       </HashRouter>
     </div>

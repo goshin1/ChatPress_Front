@@ -66,33 +66,67 @@
 
 #createBody > div{
     top: 0;
-    height: 90vh;
+}
+
+.ql-toolbar{
+    z-index: 1;
 }
 
 .ql-container{
     margin: 0 auto;
     width: 45%;
     min-width: 300px;
+    min-height: 420px;
+    height: auto;
     top: 0;
-    min-height: 100%;
-    height: auto;
     background-color: rgb(255,255,255);
-}
-
-.ql-editor {
-    overflow: auto;
-    min-height: 100%;
-    height: auto;
-    display: block;
-}
-
-
-.ql-container{
     page-break-before: always;
 }
 
+.ql-editor {
+    padding: 0;
+    min-height: 100%;
+    height: 100%;
+    display: block;
+}
 
+#editorDiv{
+    height: auto;
+    min-height: 80vh;
+}
 
+.ql-editor img{
+    max-width: 100%;
+    resize: both;
+    
+}
+
+#imgResize{
+    width: 250px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 5px;
+    position: absolute;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+    font-size: 12px;
+    text-indent: 5px;
+    z-index: 1;
+}
+
+#imgValue{
+    margin: 0px 5px 0px 0px;
+    width: 100px;
+}
+
+.imgReBtn{
+    margin: 0px 5px 0px 0px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(84, 216, 84);
+    color: rgb(0, 102, 0)
+}
 
 /* 문서 목록 팝업 */
 .documentList{
@@ -116,6 +150,14 @@
     display: block;
 }
 
+.documentMainBox{
+    margin: 20px auto 20px;
+    height: 50%;
+    min-height: 150px;
+    width: 100%;
+    display: block;
+}
+
 .documentBlock{
     width: 100%;
     height: 40px;
@@ -123,7 +165,6 @@
     text-indent: 10px;
     background-color: rgb(255, 255, 255);
     border-bottom: 1px solid rgb(240, 240, 240);
-    border-radius: 5px;
     position: relative;
     transition: all 0.2s;
     cursor: pointer;
@@ -133,14 +174,40 @@
     background-color: rgb(84, 216, 84);
 }
 
+.shareBtn{
+    margin : 5px 10px;
+    width: 50px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    float : right;
+    color: rgb(255, 255, 255);
+}
+
 .loadCancle{
     margin: 20px 45%;
+    min-width: 50px;
     width: 10%;
     height: 30px;
     border: none;
     border-radius: 5px;
     background-color: rgb(84, 216, 84);
     color: rgb(255, 255, 255);
+}
+
+/* A4자  */
+#scrollbar{
+    max-width: 20px;
+    width: 2.5%;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    z-index: 0;
+}
+
+.scrollblock{
+    margin: 5px auto;
+    width: 80%;
+    background-color: rgb(200, 200, 200);
 }
 
 /* 공식 스타일 */
@@ -150,17 +217,29 @@
     border-top: 0;
     padding: 10px;
 }
-  
+
 .controls-right {
     margin-left: auto;
 }
-  
+
 .state {
     margin: 10px 0;
     font-family: monospace;
 }
-  
+
 .state-title {
     color: #999;
     text-transform: uppercase;
+}
+
+/* 테이블 */
+.table{
+    width: 90%;
+    min-height: 100px;
+    border: 1px solid rgb(0,0,0);
+    display: inline-block;
+}
+
+table{
+    width: 100%;
 }

@@ -12,17 +12,26 @@ export default function Preview(){
     const [lastChange, setLastChange] = useState();
 
     useEffect(() => {
+        console.log(state);
+
+        
         document.getElementsByClassName("ql-toolbar")[0].classList.add("clearTool");
         document.getElementsByClassName("ql-container")[0].classList.add("clearContainer");
         document.getElementsByClassName("ql-container")[0].style.border = "none";
         quillRef.current.root.innerHTML = state.innerHTML;
         window.print();
-        navigate("/create", {
-            state : {
-                id : state.id,
-                check : state.check
-            }
-        })
+        
+        
+        if(state?.id === undefined){
+            navigate("/create")
+        }else{
+            navigate("/create", {
+                state : {
+                    id : state.id,
+                    check : state.check
+                }
+            })
+        }
         return;
     }, []);
 

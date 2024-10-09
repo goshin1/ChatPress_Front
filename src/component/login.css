@@ -8,6 +8,7 @@
     margin: 7.5% auto;
     width: 40%;
     min-width: 300px;
+    max-width: 450px;
     height: 70%;
     min-height: 600px;
     border-radius: 25px;
@@ -22,11 +23,11 @@
     height: 13%;
     line-height: 100%;
     text-align: center;
-    background-color: rgb(0, 165, 0);
-    border-radius: 25px;
-    font-size: 190%;
-    font-weight: bold;
-    color: rgb(255,255,255);
+}
+
+#loginLogo img{
+    margin-top: -30px;
+    width: 70%;
 }
 
 #loginForm input{
@@ -34,7 +35,7 @@
 }
 
 #loginId{
-    margin: 100px auto 0px;
+    margin: 90px auto 0px;
 }
 
 #loginPassword{
@@ -56,7 +57,7 @@
 }
 
 #loginBtn{
-    margin: 100px auto 0px;
+    margin: 80px auto 0px;
 }
 
 #joinBtn{
@@ -93,4 +94,12 @@
     display: block;
     color: rgb(0,0,0);
     text-align: center;
+}
+
+#loginEmail{
+    margin: 0px auto;
+    width: 80%;
+    text-align: center;
+    font-size: 10px;
+    color: rgb(160,160,160);
 }

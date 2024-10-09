@@ -7,8 +7,8 @@ export default function Search(){
     const navigate = useNavigate();
     const [number, setNumber] = useState();
     const [info, setInfo] = useState({
-        username : "ss",
-        password : "sdas"
+        username : "",
+        password : ""
     });
 
     return <div id="checkDiv">

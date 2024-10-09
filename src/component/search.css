@@ -5,8 +5,9 @@
     min-width: 260px;
     width: 50%;
     min-height: 45vh;
-    border: 1px solid rgb(84, 216, 84);
-    border-radius: 20px;
+    border: 3px solid rgb(0, 165, 0);
+    box-shadow: 0px 0px 5px rgba(48,48,48,0.5);
+    border-radius: 25px;
     position: relative;
     transition: all 0.2s;
 }
