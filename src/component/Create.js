@@ -32,18 +32,16 @@ export default function Create(){
     const [toolbarHeight, setToolbarHeight] = useState("0px");
 
     useEffect(() => {
-        console.log("--- params ---")
-        console.log(params)
+        
         if(params.documentCode !== undefined){
             axios.get("/share/load/document?code="+params.documentCode)
             .then((response) => {
                 if(response.status === 200){
-                    console.log(response.data);
                     if(response.data.password !== "NONE"){
                         while((prompt("비밀번호를 입력해주세요.")) !== response.data.password){
-                            
+
                         }
-                        
+
                     }
                     setTitle(response.data.fileOrgName);
                     quillRef.current.root.innerHTML = response.data.innerHTML;

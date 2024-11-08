@@ -48,12 +48,7 @@ export default function Login(){
                     }
                 }}/>
                 <input type="button" id="loginBtn" value="로그인" onClick={()=>{
-                    // navigate("/main", {
-                    //     state : {
-                    //         id : "user",
-                    //         check : "checks"
-                    //     }
-                    // })
+               
 
                     let id = document.querySelector("#loginId").value;
                     let password = document.querySelector("#loginPassword").value;

@@ -76,12 +76,10 @@ export default function Join(){
             인증 번호 
             <p>
                 <input type="button" className="emailBtn" value="확인" onClick={() => {
-                    console.log(number)
-                    console.log(document.getElementById("codeCheck").value)
+                    
                     if(number === undefined) return;
                     if(document.getElementById("codeCheck").value === "") return;
                     
-                    console.log(number)
                     if(number === document.getElementById("codeCheck").value){
                         alert("인증번호가 일치합니다.");
                         setEmailCheck(true);
@@ -103,7 +101,7 @@ export default function Join(){
                 document.getElementById("join_file").click();
             }}/>
             <input type="file" id="join_file" name="file" accept=".jpg, .jpeg, .png, .gif" onChange={(event) => {
-                console.log(event)
+
                 if (event.target.files && event.target.files[0]) {
                     var reader = new FileReader();
                     reader.onload = function(e) {
@@ -218,28 +216,3 @@ export default function Join(){
         }}/>
     </div>
 }
-
-// 폼데이터 전송
-// let fileType = document.querySelector('input[name="file_type"]:checked').value;
-
-// console.log(fileType)
-
-
-// formData.append("file_type", fileType);
-// formData.append("file", document.getElementById("file").files[0]);
-// formData.append("room_id", num);
-
-
-// axios.post("/message/upload", formData, {
-//     headers : {
-//         "Content-Type" : "multipart/form-data"
-//     }
-// }).then((response) => {
-//     console.log(response.data);
-//     socket.send(JSON.stringify({
-//         chatRoomId : select,
-//         type : "SEND",
-//         message : response.data,
-//         user : state.id,
-//         fileType : fileType}));
-// })
