@@ -32,17 +32,24 @@ export default function Create(){
     const [toolbarHeight, setToolbarHeight] = useState("0px");
 
     useEffect(() => {
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> e19d44668882260d097d58543a1f29822e473ff7
         if(params.documentCode !== undefined){
             axios.get("/share/load/document?code="+params.documentCode)
             .then((response) => {
                 if(response.status === 200){
+<<<<<<< HEAD
 
+=======
+>>>>>>> e19d44668882260d097d58543a1f29822e473ff7
                     if(response.data.password !== "NONE"){
                         while((prompt("비밀번호를 입력해주세요.")) !== response.data.password){
-                            
+
                         }
-                        
+
                     }
                     setTitle(response.data.fileOrgName);
                     quillRef.current.root.innerHTML = response.data.innerHTML;
