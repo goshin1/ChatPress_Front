@@ -18,6 +18,9 @@
 * Css
 * Mysql
 
+## 구조
+![](introduce/chatpress_structure.PNG)
+
 ## 구현 내용
 ![](introduce/login.png)<br/>
 
